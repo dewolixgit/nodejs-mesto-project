@@ -2,12 +2,12 @@ import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { errors as celebrateErrors } from 'celebrate';
-import getMongoDbConnectString from './helpers/getMongoDbConnectString';
+import getMongoDbConnectString from './utils/getMongoDbConnectString';
 import usersRouter from './routers/cards';
 import cardsRouter from './routers/users';
-import ERROR_MESSAGES from './config/error';
-import RESPONSE_CODE from './config/responseCode';
-import getErrorResponseBody from './helpers/getErrorResponseBody';
+import ERROR_MESSAGES from './utils/consts/error';
+import RESPONSE_CODE from './utils/consts/responseCode';
+import getErrorResponseBody from './utils/getErrorResponseBody';
 import mockAuthorization from './middlewares/mockAuthorization';
 import catchAllErrors from './middlewares/catchAllErrors';
 

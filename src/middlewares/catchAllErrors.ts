@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import RESPONSE_CODE from '../config/responseCode';
-import ERROR_MESSAGES from '../config/error';
+import RESPONSE_CODE from '../utils/consts/responseCode';
+import ERROR_MESSAGES from '../utils/consts/error';
 
 const catchAllErrors = (err: any, req: Request, res: Response, _: NextFunction) => {
   res

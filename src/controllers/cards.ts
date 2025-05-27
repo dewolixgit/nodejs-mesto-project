@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import Card from '../models/card';
-import ERROR_MESSAGES from '../config/error';
-import getErrorResponseBody from '../helpers/getErrorResponseBody';
-import RESPONSE_CODE from '../config/responseCode';
+import ERROR_MESSAGES from '../utils/consts/error';
+import getErrorResponseBody from '../utils/getErrorResponseBody';
+import RESPONSE_CODE from '../utils/consts/responseCode';
 
 export const getCards = async (req: Request, res: Response) => {
   try {
