@@ -8,6 +8,8 @@ import cardsRouter from './routers/users';
 import ERROR_MESSAGES from './config/error';
 import RESPONSE_CODE from './config/responseCode';
 import getErrorResponseBody from './helpers/getErrorResponseBody';
+import mockAuthorization from './middlewares/mockAuthorization';
+import catchAllErrors from './middlewares/catchAllErrors';
 
 dotenv.config();
 
@@ -18,17 +20,11 @@ const {
 const start = async () => {
   const app = express();
 
-  app.use((req, res, next) => {
-    req.user = {
-      _id: '6834be70a38722f59ab1cfea',
-    };
-
-    next();
-  });
-
+  app.use(mockAuthorization);
   app.use(express.json());
   app.use(usersRouter);
   app.use(cardsRouter);
+  app.use(celebrateErrors());
 
   await mongoose.connect(getMongoDbConnectString({
     dbHost: DB_HOST,
@@ -36,17 +32,11 @@ const start = async () => {
     dbName: DB_NAME,
   }));
 
-  app.use(celebrateErrors());
-
   app.all('*', (req, res) => {
     res.status(RESPONSE_CODE.notFound).send(getErrorResponseBody(ERROR_MESSAGES.notFound));
   });
 
-  app.use((err: any, req: Request, res: Response, _: NextFunction) => {
-    res
-      .status(err.status || RESPONSE_CODE.internalError)
-      .send(err.message || ERROR_MESSAGES.internalError);
-  });
+  app.use(catchAllErrors);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
