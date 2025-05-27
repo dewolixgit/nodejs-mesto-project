@@ -42,4 +42,17 @@ export const validateUserId = celebrate({
   }),
 });
 
+export const validateUpdateUser = celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    name: Joi.string().min(2).max(30).required(),
+    about: Joi.string().min(2).max(200).required(),
+  }),
+});
+
+export const validateUpdateAvatar = celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    avatar: Joi.string().uri().required(),
+  }),
+});
+
 export default mongoose.model<IUser>('user', userSchema);

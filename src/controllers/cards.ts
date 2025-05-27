@@ -3,7 +3,6 @@ import Card from '../models/card';
 import ERROR_MESSAGES from '../config/error';
 import getErrorResponseBody from '../helpers/getErrorResponseBody';
 import RESPONSE_CODE from '../config/responseCode';
-import { SessionRequest } from '../types/request';
 
 export const getCards = async (req: Request, res: Response) => {
   try {
@@ -17,12 +16,10 @@ export const getCards = async (req: Request, res: Response) => {
 };
 
 export const createCard = async (req: Request, res: Response) => {
-  const sessionRequest = req as SessionRequest;
-
-  const { name, link } = sessionRequest.body;
+  const { name, link } = req.body;
 
   try {
-    const card = await Card.create({ name, link, owner: sessionRequest.user._id });
+    const card = await Card.create({ name, link, owner: req.user._id });
     res.status(RESPONSE_CODE.created).send(card);
   } catch (err) {
     res
@@ -39,6 +36,48 @@ export const deleteCard = async (req: Request, res: Response) => {
       res
         .status(RESPONSE_CODE.notFound)
         .send(getErrorResponseBody(ERROR_MESSAGES.cardNotFound));
+      return;
+    }
+
+    res.send(card);
+  } catch (err) {
+    res
+      .status(RESPONSE_CODE.internalError)
+      .send(getErrorResponseBody(ERROR_MESSAGES.internalError));
+  }
+};
+
+export const likeCard = async (req: Request, res: Response) => {
+  try {
+    const card = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $addToSet: { likes: req.user._id } },
+      { new: true },
+    );
+
+    if (!card) {
+      res.status(RESPONSE_CODE.notFound).send(getErrorResponseBody(ERROR_MESSAGES.cardNotFound));
+      return;
+    }
+
+    res.send(card);
+  } catch (err) {
+    res
+      .status(RESPONSE_CODE.internalError)
+      .send(getErrorResponseBody(ERROR_MESSAGES.internalError));
+  }
+};
+
+export const dislikeCard = async (req: Request, res: Response) => {
+  try {
+    const card = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $pull: { likes: req.user._id } },
+      { new: true },
+    );
+
+    if (!card) {
+      res.status(RESPONSE_CODE.notFound).send(getErrorResponseBody(ERROR_MESSAGES.cardNotFound));
       return;
     }
 

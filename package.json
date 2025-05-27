@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "ESLINT_USE_FLAT_CONFIG=false npx eslint src/**/*.ts",
     "build": "tsc",
-    "dev": "ts-node-dev src/app.ts",
-    "start": "ts-node src/app.ts",
+    "dev": "ts-node-dev --files src/app.ts",
+    "start": "ts-node --files src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "dewolixgit",
