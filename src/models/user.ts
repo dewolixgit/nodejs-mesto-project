@@ -1,6 +1,5 @@
 import { celebrate, Joi, Segments } from 'celebrate';
 import mongoose from 'mongoose';
-import ERROR_MESSAGES from '../config/error';
 
 export interface IUser extends mongoose.Document {
   name: string;
