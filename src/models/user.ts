@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema<IUser>({
     type: String,
     required: true,
     minlength: 2,
-    maxlength: 200,
+    maxlength: 30,
   },
   avatar: {
     type: String,
@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema<IUser>({
 export const validateCreateUser = celebrate({
   [Segments.BODY]: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    about: Joi.string().min(2).max(200).required(),
+    about: Joi.string().min(2).max(30).required(),
     avatar: Joi.string().uri().required(),
   }),
 });
@@ -45,7 +45,7 @@ export const validateUserId = celebrate({
 export const validateUpdateUser = celebrate({
   [Segments.BODY]: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    about: Joi.string().min(2).max(200).required(),
+    about: Joi.string().min(2).max(30).required(),
   }),
 });
 
