@@ -1,51 +1,48 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import User from '../models/user';
 import ERROR_MESSAGES from '../utils/consts/error';
-import getErrorResponseBody from '../utils/getErrorResponseBody';
 import RESPONSE_CODE from '../utils/consts/responseCode';
+import ResponseError from '../utils/ResponseError';
 
-export const getUsers = async (req: Request, res: Response) => {
+export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await User.find();
     res.send(users);
   } catch (err) {
-    res
-      .status(RESPONSE_CODE.internalError)
-      .send(getErrorResponseBody(ERROR_MESSAGES.internalError));
+    next(ResponseError.getInternalError());
   }
 };
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await User.findById(req.params.userId);
 
     if (!user) {
-      res.status(RESPONSE_CODE.notFound).send(getErrorResponseBody(ERROR_MESSAGES.userNotFound));
+      next(new ResponseError({
+        message: ERROR_MESSAGES.userNotFound,
+        status: RESPONSE_CODE.notFound,
+      }));
       return;
     }
 
     res.send(user);
   } catch (err) {
-    res
-      .status(RESPONSE_CODE.internalError)
-      .send(getErrorResponseBody(ERROR_MESSAGES.internalError));
+    next(ResponseError.getInternalError());
   }
 };
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   const { name, about, avatar } = req.body;
 
   try {
     const user = await User.create({ name, about, avatar });
     res.status(RESPONSE_CODE.created).send(user);
   } catch (err) {
-    res
-      .status(RESPONSE_CODE.internalError)
-      .send(getErrorResponseBody(ERROR_MESSAGES.internalError));
+    next(ResponseError.getInternalError());
   }
 };
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const { name, about } = req.body;
 
   try {
@@ -56,19 +53,20 @@ export const updateUser = async (req: Request, res: Response) => {
     );
 
     if (!user) {
-      res.status(RESPONSE_CODE.notFound).send(getErrorResponseBody(ERROR_MESSAGES.userNotFound));
+      next(new ResponseError({
+        message: ERROR_MESSAGES.userNotFound,
+        status: RESPONSE_CODE.notFound,
+      }));
       return;
     }
 
     res.send(user);
   } catch (err) {
-    res
-      .status(RESPONSE_CODE.internalError)
-      .send(getErrorResponseBody(ERROR_MESSAGES.internalError));
+    next(ResponseError.getInternalError());
   }
 };
 
-export const updateAvatar = async (req: Request, res: Response) => {
+export const updateAvatar = async (req: Request, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
 
   try {
@@ -79,14 +77,15 @@ export const updateAvatar = async (req: Request, res: Response) => {
     );
 
     if (!user) {
-      res.status(RESPONSE_CODE.notFound).send(getErrorResponseBody(ERROR_MESSAGES.userNotFound));
+      next(new ResponseError({
+        message: ERROR_MESSAGES.userNotFound,
+        status: RESPONSE_CODE.notFound,
+      }));
       return;
     }
 
     res.send(user);
   } catch (err) {
-    res
-      .status(RESPONSE_CODE.internalError)
-      .send(getErrorResponseBody(ERROR_MESSAGES.internalError));
+    next(ResponseError.getInternalError());
   }
 };
