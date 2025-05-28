@@ -41,7 +41,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   try {
     const hashedPassword = await bcrypt.hash(
       password,
-      CONFIG.USER_PASSWORD_SALT,
+      CONFIG.usePasswordSalt,
     );
 
     const user = await User.create({

@@ -4,7 +4,7 @@ const getMongoDbConnectString = ({
   dbName,
 }: {
   dbHost?: string,
-  dbPort?: string,
+  dbPort?: string | number,
   dbName?: string
 }) => `mongodb://${dbHost}:${dbPort}/${dbName}`;
 

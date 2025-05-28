@@ -10,12 +10,9 @@ import RESPONSE_CODE from './utils/consts/responseCode';
 import getErrorResponseBody from './utils/getErrorResponseBody';
 import mockAuthorization from './middlewares/mockAuthorization';
 import catchAllErrors from './middlewares/catchAllErrors';
+import CONFIG from './utils/consts/config';
 
 dotenv.config();
-
-const {
-  PORT, DB_HOST, DB_PORT, DB_NAME,
-} = process.env;
 
 const start = async () => {
   const app = express();
@@ -27,9 +24,9 @@ const start = async () => {
   app.use(celebrateErrors());
 
   await mongoose.connect(getMongoDbConnectString({
-    dbHost: DB_HOST,
-    dbPort: DB_PORT,
-    dbName: DB_NAME,
+    dbHost: CONFIG.dbHost,
+    dbPort: CONFIG.dbPort,
+    dbName: CONFIG.dbName,
   }));
 
   app.all('*', (req, res) => {
@@ -38,8 +35,8 @@ const start = async () => {
 
   app.use(catchAllErrors);
 
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  app.listen(CONFIG.port, () => {
+    console.log(`Server is running on port ${CONFIG.port}`);
   });
 };
 
