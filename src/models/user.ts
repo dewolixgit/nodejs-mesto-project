@@ -5,24 +5,43 @@ export interface IUser extends mongoose.Document {
   name: string;
   about: string;
   avatar: string;
+  email: string;
+  password: string;
 }
+
+const USER_MODEL_DEFAULTS = {
+  name: 'Жак-Ив Кусто',
+  about: 'Исследователь',
+  avatar: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+};
 
 const userSchema = new mongoose.Schema<IUser>({
   name: {
     type: String,
-    required: true,
     minlength: 2,
     maxlength: 30,
+    default: USER_MODEL_DEFAULTS.name,
   },
   about: {
     type: String,
-    required: true,
     minlength: 2,
     maxlength: 30,
+    default: USER_MODEL_DEFAULTS.about,
   },
   avatar: {
     type: String,
+    default: USER_MODEL_DEFAULTS.avatar,
+  },
+  email: {
+    type: String,
     required: true,
+    unique: true,
+    match: /^\S+@\S+\.\S+$/,
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false,
   },
 }, {
   versionKey: false,
@@ -30,9 +49,11 @@ const userSchema = new mongoose.Schema<IUser>({
 
 export const validateCreateUser = celebrate({
   [Segments.BODY]: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    about: Joi.string().min(2).max(30).required(),
-    avatar: Joi.string().uri().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().uri(),
+    email: Joi.string().email().required(),
+    password: Joi.string().required().min(8),
   }),
 });
 
