@@ -1,9 +1,27 @@
-const CONFIG = {
-  port: process.env.PORT ?? 3000,
-  dbHost: process.env.DB_HOST ?? 'localhost',
-  dbPort: process.env.DB_PORT ?? 27017,
-  dbName: process.env.DB_NAME ?? 'mestodb',
-  usePasswordSalt: Number(process.env.USER_PASSWORD_SALT ?? 10),
+import dotenv from 'dotenv';
+
+const CONFIG_DEFAULTS = {
+  port: 3000,
+  dbHost: 'localhost',
+  dbPort: 27017,
+  dbName: 'mestodb',
+  usePasswordSalt: 10,
+  jwtSecret: 'secret',
+  jwtExpiresIn: '7d',
+  jwtMaxAge: 604800000,
+};
+
+const CONFIG = CONFIG_DEFAULTS;
+
+export const initConfig = () => {
+  dotenv.config();
+
+  Object.keys(CONFIG_DEFAULTS).forEach((key) => {
+    if (process.env[key]) {
+      // @ts-ignore
+      CONFIG[key] = process.env[key];
+    }
+  });
 };
 
 export default CONFIG;

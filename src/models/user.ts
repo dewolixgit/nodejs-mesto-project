@@ -76,4 +76,11 @@ export const validateUpdateAvatar = celebrate({
   }),
 });
 
+export const validateLogin = celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required().min(8),
+  }),
+});
+
 export default mongoose.model<IUser>('user', userSchema);
