@@ -1,5 +1,4 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { errors as celebrateErrors } from 'celebrate';
 import getMongoDbConnectString from './utils/getMongoDbConnectString';
@@ -8,38 +7,43 @@ import cardsRouter from './routers/users';
 import ERROR_MESSAGES from './utils/consts/error';
 import RESPONSE_CODE from './utils/consts/responseCode';
 import getErrorResponseBody from './utils/getErrorResponseBody';
-import mockAuthorization from './middlewares/mockAuthorization';
 import catchAllErrors from './middlewares/catchAllErrors';
+import CONFIG, { initConfig } from './utils/consts/config';
+import { validateCreateUser, validateLogin } from './models/user';
+import { createUser, login } from './controllers/users';
+import auth from './middlewares/auth';
+import { errorLogger, requestLogger } from './middlewares/logger';
 
-dotenv.config();
-
-const {
-  PORT, DB_HOST, DB_PORT, DB_NAME,
-} = process.env;
+initConfig();
 
 const start = async () => {
   const app = express();
 
-  app.use(mockAuthorization);
-  app.use(express.json());
-  app.use(usersRouter);
-  app.use(cardsRouter);
-  app.use(celebrateErrors());
-
   await mongoose.connect(getMongoDbConnectString({
-    dbHost: DB_HOST,
-    dbPort: DB_PORT,
-    dbName: DB_NAME,
+    dbHost: CONFIG.dbHost,
+    dbPort: CONFIG.dbPort,
+    dbName: CONFIG.dbName,
   }));
+
+  app.use(requestLogger);
+
+  app.use(express.json());
+  app.post('/signin', validateLogin, login);
+  app.post('/signup', validateCreateUser, createUser);
+  app.use(auth, usersRouter);
+  app.use(auth, cardsRouter);
+
+  app.use(errorLogger);
 
   app.all('*', (req, res) => {
     res.status(RESPONSE_CODE.notFound).send(getErrorResponseBody(ERROR_MESSAGES.notFound));
   });
 
+  app.use(celebrateErrors());
   app.use(catchAllErrors);
 
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  app.listen(CONFIG.port, () => {
+    console.log(`Server is running on port ${CONFIG.port}`);
   });
 };
 

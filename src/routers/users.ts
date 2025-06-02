@@ -1,9 +1,8 @@
 import express from 'express';
 import {
-  getUsers, getUserById, createUser, updateUser, updateAvatar,
+  getUsers, getUserById, updateUser, updateAvatar, getCurrentUser,
 } from '../controllers/users';
 import {
-  validateCreateUser,
   validateUpdateAvatar,
   validateUpdateUser,
   validateUserId,
@@ -12,8 +11,8 @@ import {
 const router = express.Router();
 
 router.get('/users', getUsers);
+router.get('/users/me', getCurrentUser);
 router.get('/users/:userId', validateUserId, getUserById);
-router.post('/users', validateCreateUser, createUser);
 router.patch('/users/me', validateUpdateUser, updateUser);
 router.patch('/users/me/avatar', validateUpdateAvatar, updateAvatar);
 

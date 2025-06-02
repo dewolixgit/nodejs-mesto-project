@@ -4,6 +4,12 @@ const ERROR_MESSAGES = {
   userIdIsNotValid: 'Передан некорректный идентификатор пользователя',
   cardNotFound: 'Карточка не найдена',
   notFound: 'Запрашиваемый ресурс не найден',
+  passwordOrEmailIncorrect: 'Неправильные почта или пароль',
+  forbidden: 'Недостаточно прав для выполнения операции',
+  userAlreadyExists: 'Пользователь с таким email уже существует',
+  authRequired: 'Необходима авторизация',
+  invalidToken: 'Недействительный токен',
+  forbiddenDelete: 'Нельзя удалить чужую карточку',
 };
 
 export default ERROR_MESSAGES;
