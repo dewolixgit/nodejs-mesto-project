@@ -161,3 +161,21 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     next(ResponseError.getInternalError());
   }
 };
+
+export const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      next(new ResponseError({
+        message: ERROR_MESSAGES.userNotFound,
+        status: RESPONSE_CODE.notFound,
+      }));
+      return;
+    }
+
+    res.send(user);
+  } catch {
+    next(ResponseError.getInternalError());
+  }
+};

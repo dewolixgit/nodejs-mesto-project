@@ -7,7 +7,6 @@ import ResponseError from '../utils/ResponseError';
 export const getCards = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const cards = await Card.find();
-    throw new Error();
     res.send(cards);
   } catch (err) {
     next(ResponseError.getInternalError());
@@ -27,7 +26,7 @@ export const createCard = async (req: Request, res: Response, next: NextFunction
 
 export const deleteCard = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const card = await Card.findByIdAndDelete(req.params.cardId);
+    const card = await Card.findById(req.params.cardId);
 
     if (!card) {
       next(new ResponseError({
@@ -37,7 +36,19 @@ export const deleteCard = async (req: Request, res: Response, next: NextFunction
       return;
     }
 
-    res.send(card);
+    if (String(card.owner) !== req.user._id) {
+      next(new ResponseError({
+        message: ERROR_MESSAGES.forbiddenDelete,
+        status: RESPONSE_CODE.forbidden,
+      }));
+      return;
+    }
+
+    const saved = card.toObject();
+
+    await card.deleteOne();
+
+    res.send(saved);
   } catch (err) {
     next(ResponseError.getInternalError());
   }

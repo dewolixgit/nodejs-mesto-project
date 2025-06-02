@@ -9,6 +9,7 @@ const ERROR_MESSAGES = {
   userAlreadyExists: 'Пользователь с таким email уже существует',
   authRequired: 'Необходима авторизация',
   invalidToken: 'Недействительный токен',
+  forbiddenDelete: 'Нельзя удалить чужую карточку',
 };
 
 export default ERROR_MESSAGES;
