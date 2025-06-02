@@ -36,7 +36,6 @@ const userSchema = new mongoose.Schema<IUser>({
     type: String,
     required: true,
     unique: true,
-    match: /^\S+@\S+\.\S+$/,
   },
   password: {
     type: String,
