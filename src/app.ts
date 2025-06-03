@@ -6,13 +6,13 @@ import usersRouter from './routers/cards';
 import cardsRouter from './routers/users';
 import ERROR_MESSAGES from './utils/consts/error';
 import RESPONSE_CODE from './utils/consts/responseCode';
-import getErrorResponseBody from './utils/getErrorResponseBody';
 import catchAllErrors from './middlewares/catchAllErrors';
 import CONFIG, { initConfig } from './utils/consts/config';
 import { validateCreateUser, validateLogin } from './models/user';
 import { createUser, login } from './controllers/users';
 import auth from './middlewares/auth';
 import { errorLogger, requestLogger } from './middlewares/logger';
+import ResponseError from './utils/ResponseError';
 
 initConfig();
 
@@ -33,11 +33,14 @@ const start = async () => {
   app.use(auth, usersRouter);
   app.use(auth, cardsRouter);
 
-  app.use(errorLogger);
-
-  app.all('*', (req, res) => {
-    res.status(RESPONSE_CODE.notFound).send(getErrorResponseBody(ERROR_MESSAGES.notFound));
+  app.all('*', (req, res, next) => {
+    next(new ResponseError({
+      message: ERROR_MESSAGES.notFound,
+      status: RESPONSE_CODE.notFound,
+    }));
   });
+
+  app.use(errorLogger);
 
   app.use(celebrateErrors());
   app.use(catchAllErrors);
